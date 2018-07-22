@@ -1,0 +1,93 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorMKSDriveGreen</item>
+        <item name="colorPrimaryDark">@color/colorMKSDriveGreen</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorControlNormal">@color/colorMKSDriveGreen</item>
+        <item name="colorControlActivated">@color/colorMKSDriveGreen</item>
+        <item name="android:colorForeground">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorPrimaryInverse">@color/colorBlack</item>
+        <item name="android:textColorSecondaryInverse">@color/colorBlack</item>
+        <item name="android:actionMenuTextColor">@color/colorWhite</item>
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorPrimaryInverse">@color/colorBlack</item>
+        <item name="android:colorForeground">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorSecondaryInverse">@color/colorBlack</item>
+        <item name="android:actionMenuTextColor">@color/colorWhite</item>
+    </style>
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/colorMKSDriveGreen</item>
+        <item name="android:titleTextStyle">@style/Theme.MyAppTheme.ActionBar.TitleTextStyle</item>
+    </style>
+    <style name="Theme.MyAppTheme.ActionBar.TitleTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorControlActivated">@color/colorMKSDriveGreen</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorControlActivated">@color/colorMKSDriveGreen</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorControlActivated">@color/colorMKSDriveGreen</item>
+    </style>
+    <style name="StartTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:background">@color/colorMKSDriveGreen</item>
+        <item name="android:windowBackground">@color/colorMKSDriveGreen</item>
+        <item name="colorPrimary">@color/colorMKSDriveGreen</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorPrimaryDark">@color/colorMKSDriveGreen</item>
+        <item name="android:colorBackground">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorSecondaryInverse">@color/colorBlack</item>
+        <item name="android:textColorPrimaryInverse">@color/colorBlack</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+    </style>
+    <style name="ActionBarThemeOverlay" parent="">
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorControlHighlight">@color/colorMKSDriveGreen</item>
+        <item name="android:actionMenuTextColor">@color/colorWhite</item>
+    </style>
+    <style name="HeaderBar">
+        <item name="android:background">@color/colorMKSDriveGreen</item>
+    </style>
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:itemBackground">@color/colorWhite</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:actionMenuTextColor">@color/colorBlack</item>
+    </style>
+
+    <style name="MyProgressDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorPrimary">@color/colorMKSDriveGreen</item>
+        <item name="android:popupBackground">@null</item>
+        <item name="android:background">@color/colorTransparent</item>
+        <item name="android:windowBackground">@color/colorTransparent</item>
+    </style>
+
+    <style name="MyAlertDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorMKSDriveGreen</item>
+        <item name="android:popupBackground">@null</item>
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:windowBackground">@color/colorTransparent</item>
+    </style>
+
+</resources>

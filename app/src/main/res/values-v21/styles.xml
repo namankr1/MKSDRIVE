@@ -1,0 +1,52 @@
+<resources>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorMKSDriveGreen</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:navigationBarColor">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorPrimaryInverse">@color/colorBlack</item>
+        <item name="android:colorForeground">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorSecondaryInverse">@color/colorBlack</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorMKSDriveGreen</item>
+        <item name="colorPrimaryDark">@color/colorMKSDriveGreen</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorControlNormal">@color/colorMKSDriveGreen</item>
+        <item name="colorControlActivated">@color/colorMKSDriveGreen</item>
+        <item name="android:colorForeground">@color/colorMKSDriveGreen</item>
+        <item name="android:navigationBarColor">@color/colorMKSDriveGreen</item>
+        <item name="android:statusBarColor">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorPrimaryInverse">@color/colorBlack</item>
+        <item name="android:textColorSecondaryInverse">@color/colorBlack</item>
+    </style>
+
+    <style name="StartTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:background">@color/colorMKSDriveGreen</item>
+        <item name="android:windowBackground">@color/colorMKSDriveGreen</item>
+        <item name="colorPrimary">@color/colorMKSDriveGreen</item>
+        <item name="android:statusBarColor">@color/colorMKSDriveGreen</item>
+        <item name="android:navigationBarColor">@color/colorMKSDriveGreen</item>
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorPrimaryDark">@color/colorMKSDriveGreen</item>
+        <item name="android:colorBackground">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorSecondaryInverse">@color/colorBlack</item>
+        <item name="android:textColorPrimaryInverse">@color/colorBlack</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+    </style>
+
+    <style name="MyProgressDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorMKSDriveGreen</item>
+        <item name="android:textColorPrimary">@color/colorTransparent</item>
+        <item name="android:popupBackground">@null</item>
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:windowBackground">@color/colorTransparent</item>
+    </style>
+</resources>

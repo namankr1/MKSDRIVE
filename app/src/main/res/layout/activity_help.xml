@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhitish"
+        android:fontFamily="sans-serif-condensed">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/myToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ActionBarThemeOverlay"
+            app:popupTheme="@style/ActionBarPopupThemeOverlay"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/myToolbar"
+            android:id="@+id/head"
+            android:paddingBottom="?attr/actionBarSize"
+            android:background="@color/colorMKSDriveGreen">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/page_name_height"
+                android:gravity="center"
+                android:fontFamily="sans-serif"
+                android:text="@string/activity_help_1"
+                android:textAllCaps="true"
+                android:id="@+id/myProfileText"
+                android:textColor="@color/colorWhite"
+                android:background="@color/colorMKSDriveGreen"
+                android:textSize="@dimen/page_name_text_size"
+                />
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/head"
+            android:padding="@dimen/page_info_padding"
+            android:id="@+id/nameBar"
+            android:layout_marginTop="@dimen/profile_text_margin_top"
+            android:layout_marginLeft="@dimen/profile_text_margin_left"
+            android:layout_marginStart="@dimen/profile_text_margin_left"
+            android:layout_marginBottom="@dimen/btn_margin_bottom">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/help_text"
+                android:id="@+id/nameLabel"
+                android:textColor="@color/colorBlack"
+                android:paddingLeft="@dimen/profile_text_padding_left"
+                android:paddingRight="@dimen/profile_text_padding_left"
+                android:paddingStart="@dimen/profile_text_padding_left"
+                android:textStyle="normal"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>

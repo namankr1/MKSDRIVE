@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">MKSDrive</string>
+    <string name="owner_name">CA. Manoj Sangal</string>
+    <string name="version_info">version2</string>
+    <string name="url_scheme">http</string>
+    <string name="url_host">mksdrive.herokuapp.com</string>
+    <string name="url_home">http://mksdrive.herokuapp.com/</string>
+    <string name="url_user">http://mksdrive.herokuapp.com/user/</string>
+    <string name="url_drive">http://mksdrive.herokuapp.com/drive/</string>
+    <string name="url_checkversion">http://mksdrive.herokuapp.com/user/checkversion/</string>
+    <string name="url_forgotpassword">http://mksdrive.herokuapp.com/user/forgotpassword/</string>
+    <string name="url_sendotp">http://mksdrive.herokuapp.com/user/sendotp/</string>
+    <string name="url_signin">http://mksdrive.herokuapp.com/user/signin/</string>
+    <string name="url_signout">http://mksdrive.herokuapp.com/user/signout/</string>
+    <string name="url_changepassword">http://mksdrive.herokuapp.com/user/changepassword/</string>
+    <string name="url_getprofile">http://mksdrive.herokuapp.com/user/getprofile/</string>
+    <string name="url_getdata">http://mksdrive.herokuapp.com/drive/getdata/</string>
+    <string name="url_senddata">http://mksdrive.herokuapp.com/drive/senddata/</string>
+    <string name="url_play_store">https://play.google.com/store/apps/details?id=iitp.naman.mksdrive</string>
+    <string name="url_help">http://mksdrive.herokuapp.com/help/</string>
+    <string name="title_activity_home">Home</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="image_text">CA Manoj Sangal</string>
+    <string name="cant_connect">Can\'t connect to internet. Please retry</string>
+    <string name="connection_fail">Can\'t connect to server. Please check your internet connection and retry.</string>
+    <string name="java_error">Some error Occurred</string>
+    <string name="java_please_wait">Please wait&#8230;</string>
+    <string name="activity_login">Log In</string>
+    <string name="activity_login_1">Log in to your account</string>
+    <string name="activity_login_2">Email Id</string>
+    <string name="activity_login_3">Password</string>
+    <string name="activity_login_4">Proceed</string>
+    <string name="activity_login_5">Forgot Password?</string>
+    <string name="activity_login_6">Sign Up</string>
+    <string name="activity_login_7">Remember Me</string>
+    <string name="activity_login_8">Hide</string>
+    <string name="activity_login_9">Show</string>
+    <string name="activity_changepassword_1">Change Password</string>
+    <string name="activity_changepassword_2">New password will be accepted for next login attempt onwards if successfully changed</string>
+    <string name="activity_changepassword_3">Current Password</string>
+    <string name="activity_changepassword_4">New Password</string>
+    <string name="activity_changepassword_5">Re-type New Password</string>
+    <string name="activity_changepassword_6">Confirm</string>
+    <string name="activity_forgotpassword_1">Enter received OTP and new password</string>
+    <string name="activity_forgotpassword_2">OTP</string>
+    <string name="activity_forgotpassword_3">New password</string>
+    <string name="activity_forgotpassword_4">Verify</string>
+    <string name="activity_forgotpassword_5">Resend</string>
+    <string name="activity_filerequestbyemail_1">Request File</string>
+    <string name="activity_filerequestbyemail_2">You can request this file at entered email address</string>
+    <string name="activity_filerequestbyemail_3">Receiver email</string>
+    <string name="activity_filerequestbyemail_4">Request</string>
+    <string name="activity_help_1">Help</string>
+    <string name="activity_passwordreset_1">Reset password</string>
+    <string name="activity_passwordreset_2">Email Id</string>
+    <string name="activity_passwordreset_3">Send OTP</string>
+    <string name="activity_contenthome_1">Goto Drive</string>
+    <string name="activity_myprofile_1">Profile</string>
+    <string name="activity_myprofile_2">Full name</string>
+    <string name="activity_myprofile_3">Contact number</string>
+    <string name="activity_myprofile_4">Email ID</string>
+    <string name="activity_myprofile_5">Pan Number</string>
+    <string name="activity_myprofile_6">Aadhar Number</string>
+    <string name="activity_myprofile_7">Gender</string>
+    <string name="activity_myprofile_8">Present address</string>
+    <string name="java_changepassword_1">Passwords do not match</string>
+    <string name="java_changepassword_2">Passwords can\'t be empty</string>
+    <string name="java_forgotpassword_1">OTP is mandatory</string>
+    <string name="java_forgotpassword_2">Sending OTP&#8230;</string>
+    <string name="java_forgotpassword_3">Verifying.Please wait&#8230;</string>
+    <string name="java_login_1">Password is mandatory</string>
+    <string name="java_login_2">Email is mandatory</string>
+    <string name="java_login_3">Email and password are mandatory</string>
+    <string name="java_login_4">Please verify your account first</string>
+    <string name="java_login_5">Please grant write permission to app</string>
+    <string name="java_login_6">OK</string>
+    <string name="java_login_7">Logging&#8230;</string>
+    <string name="java_home_1">Are you sure you want to exit?</string>
+    <string name="java_home_2">Yes</string>
+    <string name="java_home_3">No</string>
+    <string name="java_home_4">Logging out&#8230;</string>
+    <string name="java_startscreen_1">Please update your app to latest version.</string>
+    <string name="java_startscreen_2">Update</string>
+    <string name="java_startscreen_3">Exit</string>
+    <string name="java_startscreen_4">Can\'t connect to server. Please check your internet connection and retry.</string>
+    <string name="java_startscreen_5">Retry</string>
+    <string name="java_startscreen_6">Exit</string>
+    <string name="java_folderview_1">No files in this Directory</string>
+    <string name="java_folderview_2">OK</string>
+    <string name="java_folderview_3">Fetching data from server. Please wait&#8230;</string>
+    <string name="java_folderview_4">Cannot request folder by email</string>
+    <string name="java_folderview_5">Unable to save file. Please grant app write permission</string>
+    <string name="java_folderview_6">No app to open file. File saved at</string>
+    <string name="java_filerequestbyemail_1">Email cannot be empty</string>
+    <string name="menu_help_btn">Help</string>
+    <string name="menu_home_btn">Home</string>
+    <string name="menu_myprofile_btn">My Profile</string>
+    <string name="menu_logout_btn">Logout</string>
+    <string name="menu_exit_btn">Exit</string>
+    <string name="menu_changepassword_btn">Change Password</string>
+    <string name="default_loading">.....</string>
+    <string name="help_text">Enter username(Email id) and password and then click on \"Proceed\" button to login.\nOptionally check the \"Remember Me\" box to store your credentials for next login.\n\n
+        \nAt login for first time, the app will prompt to change your password. An otp will be sent to your registered email. Use this otp while changing the password.\n\n
+        \nIf you have forgot password, click on "Forgot Password" button and then follow the steps as above.\n\n
+        \nOnce login, you can view your profile by clicking \"My Profile\" icon on navigation view.\nAlso you can change your password from the menu at top right icon.\n\n
+        \nTo view the files, click on \"Goto Drive\" button on the home screen.\nFolders are represented with pastel yellow color background.\n\n
+        \nYou can download a file by clicking on it. Also by long pressing you can request the file by email.\n\n
+        \nFolder request feature is currently not available.\n</string>
+</resources>
+
+

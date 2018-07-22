@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorMKSDriveGreen">#65AE42</color>
+    <color name="colorMKSDriveBlue">#003D67</color>
+    <color name="colorWhitish">#eeeeee</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorBluish">#0786b1</color>
+    <color name="colorBlackish">#9e9e9e</color>
+    <color name="colorFolder">#fdfd96</color>
+    <color name="colorTransparent">#00ffffff</color>
+</resources>
