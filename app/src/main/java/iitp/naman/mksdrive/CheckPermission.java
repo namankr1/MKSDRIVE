@@ -2,12 +2,12 @@ package iitp.naman.mksdrive;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by naman on 19-12-2017.
@@ -21,7 +21,7 @@ class CheckPermission {
     static Boolean checkPermission(final Activity activity){
 
         String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)){
+        if (!Environment.MEDIA_MOUNTED.equals(state)){
             return false;
         }
 
@@ -31,11 +31,7 @@ class CheckPermission {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
                 builder.setMessage(activity.getResources().getString(R.string.java_login_5))
                         .setCancelable(true)
-                        .setPositiveButton(activity.getResources().getString(R.string.java_login_6), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-                            }
-                        });
+                        .setPositiveButton(activity.getResources().getString(R.string.java_login_6), (dialog, id) -> ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE));
                 AlertDialog alert = builder.create();
                 alert.show();
             }

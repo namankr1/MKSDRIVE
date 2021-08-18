@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorWhitish"
         android:fontFamily="sans-serif-condensed">
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/myToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -44,9 +44,7 @@
             android:gravity="center"
             android:layout_below="@+id/logoBox"
             android:id="@+id/signupPage"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:background="@drawable/info_text_view_border"
             android:padding="@dimen/page_info_padding"
@@ -67,9 +65,7 @@
             android:textColorHint="@color/colorBlackish"
             android:gravity="center"
             android:ems="10"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:background="@drawable/form_field_rectangle"
             android:padding="@dimen/box_padding"
@@ -77,7 +73,8 @@
             android:layout_marginStart="@dimen/box_margin_left"
             android:layout_marginRight="@dimen/box_margin_left"
             android:layout_marginEnd="@dimen/box_margin_left"
-            android:textColor="@color/colorMKSDriveGreen"/>
+            android:textColor="@color/colorMKSDriveGreen"
+            android:autofillHints="" />
 
         <EditText
             android:id="@+id/password"
@@ -90,9 +87,7 @@
             android:textColorHint="@color/colorBlackish"
             android:gravity="center"
             android:ems="10"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:background="@drawable/form_field_rectangle"
             android:padding="@dimen/box_padding"
@@ -100,7 +95,8 @@
             android:layout_marginStart="@dimen/box_margin_left"
             android:layout_marginRight="@dimen/box_margin_left"
             android:layout_marginEnd="@dimen/box_margin_left"
-            android:textColor="@color/colorMKSDriveGreen"/>
+            android:textColor="@color/colorMKSDriveGreen"
+            android:autofillHints="" />
         <ToggleButton
             android:layout_width="40dp"
             android:layout_height="20dp"
@@ -110,11 +106,9 @@
             android:id="@+id/checkBox"
             android:textOn="@string/activity_login_8"
             android:textOff="@string/activity_login_9"
-            android:layout_alignRight="@+id/password"
             android:layout_alignEnd="@+id/password"
             android:layout_alignBottom="@+id/password"
             android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -122,7 +116,6 @@
             android:weightSum="2"
             android:id="@+id/checkBox3"
             android:layout_below="@+id/password"
-            android:layout_alignLeft="@+id/password"
             android:layout_alignStart="@+id/password"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp">

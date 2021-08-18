@@ -1,10 +1,7 @@
 package iitp.naman.mksdrive;
 
-import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +11,9 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,8 +21,6 @@ import java.net.URL;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -44,7 +42,7 @@ public class StartScreen extends AppCompatActivity {
     }
 
     private static class NetCheckVersion extends AsyncTask<String, Void, Boolean> {
-        private WeakReference<StartScreen> activityReference;
+        private final WeakReference<StartScreen> activityReference;
 
         // only retain a weak reference to the activity
         NetCheckVersion(StartScreen context) {
@@ -74,6 +72,7 @@ public class StartScreen extends AppCompatActivity {
             if(cm==null){
                 return false;
             }
+
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
             if (netInfo != null && netInfo.isConnected()) {
                 try {
@@ -81,6 +80,7 @@ public class StartScreen extends AppCompatActivity {
                     HttpURLConnection urlC = (HttpURLConnection) url.openConnection();
                     urlC.setConnectTimeout(3000);
                     urlC.connect();
+
                     if (urlC.getResponseCode() == 200) {
                         urlC.disconnect();
                         return true;
@@ -113,7 +113,7 @@ public class StartScreen extends AppCompatActivity {
     }
 
     private static class ProcessRegisterCheckVersion extends AsyncTask<String,Void,JSONObject> {
-        private WeakReference<StartScreen> activityReference;
+        private final WeakReference<StartScreen> activityReference;
 
         // only retain a weak reference to the activity
         ProcessRegisterCheckVersion(StartScreen context) {
@@ -136,45 +136,37 @@ public class StartScreen extends AppCompatActivity {
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_checkversion);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        String serverVersion =  response.getString("message");
-                                        String localVersion = activity.getResources().getString(R.string.version_info);
-                                        if(serverVersion.equalsIgnoreCase(localVersion)){
-                                            Intent intent = new Intent(activity, Login.class);
-                                            activity.startActivity(intent);
-                                            if (activity.pDialog.isShowing()) {
-                                                activity.pDialog.dismiss();
-                                            }
-                                            activity.finish();
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    String serverVersion =  response.getString("message");
+                                    String localVersion = activity.getResources().getString(R.string.version_info);
+                                    if(serverVersion.equalsIgnoreCase(localVersion)){
+                                        Intent intent = new Intent(activity, Login.class);
+                                        activity.startActivity(intent);
+                                        if (activity.pDialog.isShowing()) {
+                                            activity.pDialog.dismiss();
                                         }
-                                        else{
-                                            AlertDialogUpdate(activity);
-                                        }
-                                    }else if(status.compareTo("err") == 0){
-                                        AlertDialogNoInternet(activity);
+                                        activity.finish();
                                     }
                                     else{
-                                        AlertDialogNoInternet(activity);
+                                        AlertDialogUpdate(activity);
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                }else if(status.compareTo("err") == 0){
                                     AlertDialogNoInternet(activity);
                                 }
+                                else{
+                                    AlertDialogNoInternet(activity);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                AlertDialogNoInternet(activity);
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        AlertDialogNoInternet(activity);
-                    }
-                });
+                        }, error -> {
+                            error.printStackTrace();
+                            AlertDialogNoInternet(activity);
+                        });
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
                 return jsonIn;
@@ -195,16 +187,10 @@ public class StartScreen extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
         builder.setMessage(activity.getResources().getString(R.string.java_startscreen_4))
                 .setCancelable(false)
-                .setPositiveButton(activity.getResources().getString(R.string.java_startscreen_5), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        new NetCheckVersion(activity).execute();
-                    }
-                })
-                .setNegativeButton(activity.getResources().getString(R.string.java_startscreen_6), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        activity.finish();
-                        new Exit(activity);
-                    }
+                .setPositiveButton(activity.getResources().getString(R.string.java_startscreen_5), (dialog, id) -> new NetCheckVersion(activity).execute())
+                .setNegativeButton(activity.getResources().getString(R.string.java_startscreen_6), (dialog, id) -> {
+                    activity.finish();
+                    new Exit(activity);
                 });
         AlertDialog alert = builder.create();
         if (activity.pDialog.isShowing()) {
@@ -217,21 +203,17 @@ public class StartScreen extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
         builder.setMessage(activity.getResources().getString(R.string.java_startscreen_1))
                 .setCancelable(false)
-                .setPositiveButton(activity.getResources().getString(R.string.java_startscreen_2), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        String url1 = activity.getResources().getString(R.string.url_play_store);
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        i.setData(Uri.parse(url1));
-                        activity.startActivity(i);
-                        activity.finish();
-                    }
+                .setPositiveButton(activity.getResources().getString(R.string.java_startscreen_2), (dialog, id) -> {
+                    String url1 = activity.getResources().getString(R.string.url_play_store);
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.setData(Uri.parse(url1));
+                    activity.startActivity(i);
+                    activity.finish();
                 })
-                .setNegativeButton(activity.getResources().getString(R.string.java_startscreen_3), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        activity.finish();
-                        new Exit(activity);
-                    }
+                .setNegativeButton(activity.getResources().getString(R.string.java_startscreen_3), (dialog, id) -> {
+                    activity.finish();
+                    new Exit(activity);
                 });
         AlertDialog alert = builder.create();
         if (activity.pDialog.isShowing()) {

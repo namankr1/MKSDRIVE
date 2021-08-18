@@ -4,19 +4,18 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
@@ -65,20 +64,14 @@ public class ForgotPassword extends AppCompatActivity {
         }
         new ProcessRegisterSendOtp(ForgotPassword.this).execute();
 
-        btnResend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                new ProcessRegisterSendOtp(ForgotPassword.this).execute();
-            }
-        });
+        btnResend.setOnClickListener(view -> new ProcessRegisterSendOtp(ForgotPassword.this).execute());
 
-        btnVerify.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                if (inputOtp.getText().toString().equals("")) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_forgotpassword_1), Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    new ProcessRegisterForgotPassword(ForgotPassword.this).execute();
-                }
+        btnVerify.setOnClickListener(view -> {
+            if (inputOtp.getText().toString().equals("")) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_forgotpassword_1), Toast.LENGTH_SHORT).show();
+            }
+            else {
+                new ProcessRegisterForgotPassword(ForgotPassword.this).execute();
             }
         });
     }
@@ -109,7 +102,7 @@ public class ForgotPassword extends AppCompatActivity {
 
         private String inputOtp1;
         private String inputNewPassword1;
-        private WeakReference<ForgotPassword> activityReference;
+        private final WeakReference<ForgotPassword> activityReference;
         private ProgressDialog pDialog;
 
         // only retain a weak reference to the activity
@@ -147,52 +140,44 @@ public class ForgotPassword extends AppCompatActivity {
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_forgotpassword);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        Toast.makeText(activity, response.getString("message"), Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(activity, Login.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        activity.startActivity(intent);
-                                        activity.finish();
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    Toast.makeText(activity, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(activity, Login.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    if (pDialog.isShowing()) {
+                                        pDialog.dismiss();
                                     }
-                                    else if(status.compareTo("err") == 0){
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        Toast.makeText(activity, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                    activity.startActivity(intent);
+                                    activity.finish();
+                                }
+                                else if(status.compareTo("err") == 0){
+                                    if (pDialog.isShowing()) {
+                                        pDialog.dismiss();
                                     }
-                                    else{
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    Toast.makeText(activity, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                }
+                                else{
                                     if (pDialog.isShowing()) {
                                         pDialog.dismiss();
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                if (pDialog.isShowing()) {
+                                    pDialog.dismiss();
+                                }
+                                Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (pDialog.isShowing()) {
-                            pDialog.dismiss();
-                        }
-                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        }, error -> {
+                            if (pDialog.isShowing()) {
+                                pDialog.dismiss();
+                            }
+                            Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                        });
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
             }
@@ -214,7 +199,7 @@ public class ForgotPassword extends AppCompatActivity {
 
     private static class ProcessRegisterSendOtp extends AsyncTask<String,Void,JSONObject> {
 
-        private WeakReference<ForgotPassword> activityReference;
+        private final WeakReference<ForgotPassword> activityReference;
         private ProgressDialog pDialog;
 
         // only retain a weak reference to the activity
@@ -248,49 +233,41 @@ public class ForgotPassword extends AppCompatActivity {
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_sendotp);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        Toast.makeText(activity, response.getString("message"), Toast.LENGTH_LONG).show();
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    if (pDialog.isShowing()) {
+                                        pDialog.dismiss();
                                     }
-                                    else if(status.compareTo("err") == 0){
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        Toast.makeText(activity, response.getString("message"), Toast.LENGTH_LONG).show();
-                                    }
-                                    else{
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(activity, response.getString("message"), Toast.LENGTH_LONG).show();
                                 }
-                                catch (JSONException e) {
-                                    e.printStackTrace();
+                                else if(status.compareTo("err") == 0){
+                                    if (pDialog.isShowing()) {
+                                        pDialog.dismiss();
+                                    }
+                                    Toast.makeText(activity, response.getString("message"), Toast.LENGTH_LONG).show();
+                                }
+                                else{
                                     if (pDialog.isShowing()) {
                                         pDialog.dismiss();
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (pDialog.isShowing()) {
-                            pDialog.dismiss();
-                        }
-                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                            catch (JSONException e) {
+                                e.printStackTrace();
+                                if (pDialog.isShowing()) {
+                                    pDialog.dismiss();
+                                }
+                                Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                            }
+                        }, error -> {
+                            if (pDialog.isShowing()) {
+                                pDialog.dismiss();
+                            }
+                            Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                        });
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
             }

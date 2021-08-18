@@ -1,19 +1,18 @@
 package iitp.naman.mksdrive;
 
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -26,10 +25,10 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.navigation.NavigationView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -84,17 +83,15 @@ public class Home extends AppCompatActivity
         String introText = "Hello " + name + "!\n" + "Welcome To MKS Drive\n"+"Phone: "+ phone + "\nEmail: "+ username;
         intro.setText(introText);
 
-        btnGotoDrive.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), FolderView.class);
-                intent.putExtra("username", username);
-                intent.putExtra("name", "Files");
-                intent.putExtra("mimeType", "application/vnd.google-apps.folder");
-                intent.putExtra("folderID", folderID);
-                intent.putExtra("secureKey", secureKey);
-                intent.putExtra("downloadPath", Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name));
-                startActivity(intent);
-            }
+        btnGotoDrive.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), FolderView.class);
+            intent.putExtra("username", username);
+            intent.putExtra("name", "Files");
+            intent.putExtra("mimeType", "application/vnd.google-apps.folder");
+            intent.putExtra("folderID", folderID);
+            intent.putExtra("secureKey", secureKey);
+            intent.putExtra("downloadPath", Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name));
+            startActivity(intent);
         });
 
         navigationView = findViewById(R.id.navView);
@@ -115,17 +112,11 @@ public class Home extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialog);
             builder.setMessage(getResources().getString(R.string.java_home_1))
                     .setCancelable(true)
-                    .setPositiveButton(getResources().getString(R.string.java_home_2), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            new Exit(Home.this);
-                            finish();
-                        }
+                    .setPositiveButton(getResources().getString(R.string.java_home_2), (dialog, id) -> {
+                        new Exit(Home.this);
+                        finish();
                     })
-                    .setNegativeButton(getResources().getString(R.string.java_home_3), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                    .setNegativeButton(getResources().getString(R.string.java_home_3), (dialog, id) -> dialog.cancel());
             AlertDialog alert = builder.create();
             alert.show();
         }
@@ -187,7 +178,7 @@ public class Home extends AppCompatActivity
     private static class ProcessRegister extends AsyncTask<String, Void, JSONObject> {
 
         private ProgressDialog pDialog;
-        private WeakReference<Home> activityReference;
+        private final WeakReference<Home> activityReference;
 
         // only retain a weak reference to the activity
         ProcessRegister(Home context) {
@@ -219,48 +210,40 @@ public class Home extends AppCompatActivity
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_signout);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
-                                        e.putBoolean("rm", false);
-                                        e.apply();
-                                        e.commit();
-                                        Intent intent = new Intent(activity, Login.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        activity.startActivity(intent);
-                                        activity.finish();
-                                    } else {
-                                        if (pDialog.isShowing()) {
-                                            pDialog.dismiss();
-                                        }
-                                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
+                                    e.putBoolean("rm", false);
+                                    e.apply();
+                                    e.commit();
+                                    Intent intent = new Intent(activity, Login.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    if (pDialog.isShowing()) {
+                                        pDialog.dismiss();
                                     }
-                                } catch (JSONException e) {
+                                    activity.startActivity(intent);
+                                    activity.finish();
+                                } else {
                                     if (pDialog.isShowing()) {
                                         pDialog.dismiss();
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
                                 }
+                            } catch (JSONException e) {
+                                if (pDialog.isShowing()) {
+                                    pDialog.dismiss();
+                                }
+                                Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (pDialog.isShowing()) {
-                            pDialog.dismiss();
-                        }
-                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        }, error -> {
+                            if (pDialog.isShowing()) {
+                                pDialog.dismiss();
+                            }
+                            Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                        });
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
 

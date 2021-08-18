@@ -1,24 +1,22 @@
 package iitp.naman.mksdrive;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
@@ -31,7 +29,7 @@ import java.lang.ref.WeakReference;
  * Retrieves profile
  */
 
-public class MyProfile extends AppCompatActivity{
+public class MyProfile extends AppCompatActivity {
     private String username;
     private String secureKey;
     private String name;
@@ -158,71 +156,61 @@ public class MyProfile extends AppCompatActivity{
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_getprofile);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    JSONObject tempData =  response.getJSONObject("profile");
+                                    activity.name = tempData.getString("name");
+                                    activity.phone = tempData.getString("phone");
+                                    activity.email = tempData.getString("email");
+                                    activity.pan = tempData.getString("pan");
+                                    activity.aadhar = tempData.getString("aadhar");
+                                    activity.gender = tempData.getString("gender");
+                                    activity.address = tempData.getString("address");
+                                    activity.state = tempData.getString("state");
+                                    activity.zipcode = tempData.getString("zipcode");
 
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        JSONObject tempData =  response.getJSONObject("profile");
-                                        activity.name = tempData.getString("name");
-                                        activity.phone = tempData.getString("phone");
-                                        activity.email = tempData.getString("email");
-                                        activity.pan = tempData.getString("pan");
-                                        activity.aadhar = tempData.getString("aadhar");
-                                        activity.gender = tempData.getString("gender");
-                                        activity.address = tempData.getString("address");
-                                        activity.state = tempData.getString("state");
-                                        activity.zipcode = tempData.getString("zipcode");
-
-                                        switch (activity.gender){
-                                            case "M" :
-                                                activity.gender="Male";
-                                                break;
-                                            case "F" :
-                                                activity.gender="Female";
-                                                break;
-                                            default:
-                                                activity.gender="Other";
-                                        }
-
-                                        activity.name1.setText(activity.name);
-                                        activity.phone1.setText(activity.phone);
-                                        activity.email1.setText(activity.email);
-                                        activity.pan1.setText(activity.pan);
-                                        activity.aadhar1.setText(activity.aadhar);
-                                        activity.gender1.setText(activity.gender);
-                                        String addressText = activity.address + ", " + activity.state + ", " + activity.zipcode;
-                                        activity.address1.setText(addressText);
-                                        if (activity.pDialog.isShowing()) {
-                                            activity.pDialog.dismiss();
-                                        }
+                                    switch (activity.gender){
+                                        case "M" :
+                                            activity.gender="Male";
+                                            break;
+                                        case "F" :
+                                            activity.gender="Female";
+                                            break;
+                                        default:
+                                            activity.gender="Other";
                                     }
-                                    else if(status.compareTo("err") == 0){
-                                        String resp = response.getString("message");
-                                        if(resp.equals("Invalid session, please login again")){
-                                            AlertDialogInvalidSession(activity,resp);
-                                        }
-                                        else {
-                                            AlertDialogError(activity);
-                                        }
+
+                                    activity.name1.setText(activity.name);
+                                    activity.phone1.setText(activity.phone);
+                                    activity.email1.setText(activity.email);
+                                    activity.pan1.setText(activity.pan);
+                                    activity.aadhar1.setText(activity.aadhar);
+                                    activity.gender1.setText(activity.gender);
+                                    String addressText = activity.address + ", " + activity.state + ", " + activity.zipcode;
+                                    activity.address1.setText(addressText);
+                                    if (activity.pDialog.isShowing()) {
+                                        activity.pDialog.dismiss();
                                     }
-                                    else{
+                                }
+                                else if(status.compareTo("err") == 0){
+                                    String resp = response.getString("message");
+                                    if(resp.equals("Invalid session, please login again")){
+                                        AlertDialogInvalidSession(activity,resp);
+                                    }
+                                    else {
                                         AlertDialogError(activity);
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                }
+                                else{
                                     AlertDialogError(activity);
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                AlertDialogError(activity);
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        AlertDialogError(activity);
-                    }
-                });
+                        }, error -> AlertDialogError(activity));
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
 
@@ -244,11 +232,9 @@ public class MyProfile extends AppCompatActivity{
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
         builder.setMessage(activity.getResources().getString(R.string.connection_fail))
                 .setCancelable(false)
-                .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        activity.finish();
-                    }
+                .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), (dialog, id) -> {
+                    dialog.cancel();
+                    activity.finish();
                 });
         AlertDialog alert = builder.create();
         if (activity.pDialog.isShowing()) {
@@ -261,18 +247,16 @@ public class MyProfile extends AppCompatActivity{
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
         builder.setMessage(resp)
                 .setCancelable(false)
-                .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
-                        e.putBoolean("rm", false);
-                        e.apply();
-                        e.commit();
-                        dialog.cancel();
-                        Intent intent = new Intent(activity, Login.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        activity.startActivity(intent);
-                        activity.finish();
-                    }
+                .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), (dialog, id) -> {
+                    SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
+                    e.putBoolean("rm", false);
+                    e.apply();
+                    e.commit();
+                    dialog.cancel();
+                    Intent intent = new Intent(activity, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    activity.startActivity(intent);
+                    activity.finish();
                 });
         AlertDialog alert = builder.create();
         if (activity.pDialog.isShowing()) {

@@ -3,13 +3,10 @@ package iitp.naman.mksdrive;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -17,16 +14,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -59,7 +56,7 @@ public class Login extends AppCompatActivity {
         }
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         sf = getSharedPreferences("cookie_data",MODE_PRIVATE);
-        Boolean cbf = sf.getBoolean("rm",false);
+        boolean cbf = sf.getBoolean("rm",false);
 
         if(!MakeFolder.makeFolder(Login.this, Environment.getExternalStorageDirectory() + File.separator + getResources().getString(R.string.app_name))){
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_5), Toast.LENGTH_SHORT).show();
@@ -86,40 +83,32 @@ public class Login extends AppCompatActivity {
             inputEmail.setText(sf.getString("username",""));
             inputPassword.setText(sf.getString("password",""));
             ch2.setChecked(sf.getBoolean("checkbox",false));
-            tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        inputPassword.setInputType(InputType.TYPE_CLASS_TEXT);
-                    }
-                    else {
-                        inputPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    }
+            tb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    inputPassword.setInputType(InputType.TYPE_CLASS_TEXT);
+                }
+                else {
+                    inputPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 }
             });
 
-            btnReset.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    Intent myIntent = new Intent(getApplicationContext(), PasswordReset.class);
-                    startActivity(myIntent);
-                }
+            btnReset.setOnClickListener(view -> {
+                Intent myIntent = new Intent(getApplicationContext(), PasswordReset.class);
+                startActivity(myIntent);
             });
 
-            btnLogin.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    if ((!inputEmail.getText().toString().equals("")) && (!inputPassword.getText().toString().equals(""))) {
-                        new ProcessLogin(Login.this).execute();
-                    }
-                    else if ((!inputEmail.getText().toString().equals(""))) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_1), Toast.LENGTH_SHORT).show();
-                    }
-                    else if ((!inputPassword.getText().toString().equals(""))) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_2), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_3), Toast.LENGTH_SHORT).show();
-                    }
+            btnLogin.setOnClickListener(view -> {
+                if ((!inputEmail.getText().toString().equals("")) && (!inputPassword.getText().toString().equals(""))) {
+                    new ProcessLogin(Login.this).execute();
+                }
+                else if ((!inputEmail.getText().toString().equals(""))) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_1), Toast.LENGTH_SHORT).show();
+                }
+                else if ((!inputPassword.getText().toString().equals(""))) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_2), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_3), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -155,7 +144,7 @@ public class Login extends AppCompatActivity {
         private String inputPassword1,inputEmail1;
         private ProgressDialog pDialog;
 
-        private WeakReference<Login> activityReference;
+        private final WeakReference<Login> activityReference;
 
         // only retain a weak reference to the activity
         ProcessLogin(Login context) {
@@ -191,95 +180,87 @@ public class Login extends AppCompatActivity {
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_signin);
                 final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    JSONObject tempData =  response.getJSONObject("profile");
+                                    String name = tempData.getString("name");
+                                    String phone = tempData.getString("phone");
+                                    String username = tempData.getString("email");
+                                    String folderID = tempData.getString("folderID");
+                                    String secureKey = tempData.getString("secureKey");
 
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        JSONObject tempData =  response.getJSONObject("profile");
-                                        String name = tempData.getString("name");
-                                        String phone = tempData.getString("phone");
-                                        String username = tempData.getString("email");
-                                        String folderID = tempData.getString("folderID");
-                                        String secureKey = tempData.getString("secureKey");
+                                    SharedPreferences.Editor e = activity.sf.edit();
+                                    e.clear();
+                                    e.apply();
+                                    e.commit();
+                                    e.putBoolean("rm", true);
+                                    e.putString("username", username);
+                                    e.putString("name", name);
+                                    e.putString("phone", phone);
+                                    e.putString("folderID", folderID);
+                                    e.putString("secureKey", secureKey);
+                                    if (activity.ch2.isChecked()){
+                                        e.putString("password", inputPassword1);
+                                        e.putBoolean("checkbox", true);
+                                    }
+                                    else{
+                                        e.putString("password", "");
+                                        e.putBoolean("checkbox", false);
+                                    }
+                                    e.apply();
+                                    e.commit();
 
-                                        SharedPreferences.Editor e = activity.sf.edit();
-                                        e.clear();
-                                        e.apply();
-                                        e.commit();
-                                        e.putBoolean("rm", true);
-                                        e.putString("username", username);
-                                        e.putString("name", name);
-                                        e.putString("phone", phone);
-                                        e.putString("folderID", folderID);
-                                        e.putString("secureKey", secureKey);
-                                        if (activity.ch2.isChecked()){
-                                            e.putString("password", inputPassword1);
-                                            e.putBoolean("checkbox", true);
-                                        }
-                                        else{
-                                            e.putString("password", "");
-                                            e.putBoolean("checkbox", false);
-                                        }
-                                        e.apply();
-                                        e.commit();
-
-                                        Intent intent = new Intent(activity, Home.class);
-                                        intent.putExtra("username", username);
-                                        intent.putExtra("name", name);
-                                        intent.putExtra("phone", phone);
-                                        intent.putExtra("folderID", folderID);
-                                        intent.putExtra("secureKey", secureKey);
+                                    Intent intent = new Intent(activity, Home.class);
+                                    intent.putExtra("username", username);
+                                    intent.putExtra("name", name);
+                                    intent.putExtra("phone", phone);
+                                    intent.putExtra("folderID", folderID);
+                                    intent.putExtra("secureKey", secureKey);
+                                    if (pDialog.isShowing()) {
+                                        pDialog.dismiss();
+                                    }
+                                    activity.startActivity(intent);
+                                    activity.finish();
+                                }
+                                else if (status.compareTo("err") == 0) {
+                                    String resp = response.getString("message");
+                                    if(resp.equalsIgnoreCase("User account is disabled")){
+                                        Intent intent = new Intent(activity, ForgotPassword.class);
+                                        intent.putExtra("username", inputEmail1);
                                         if (pDialog.isShowing()) {
                                             pDialog.dismiss();
                                         }
                                         activity.startActivity(intent);
-                                        activity.finish();
-                                    }
-                                    else if (status.compareTo("err") == 0) {
-                                        String resp = response.getString("message");
-                                        if(resp.equalsIgnoreCase("User account is disabled")){
-                                            Intent intent = new Intent(activity, ForgotPassword.class);
-                                            intent.putExtra("username", inputEmail1);
-                                            if (pDialog.isShowing()) {
-                                                pDialog.dismiss();
-                                            }
-                                            activity.startActivity(intent);
-                                            Toast.makeText(activity, activity.getResources().getString(R.string.java_login_4), Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            if (pDialog.isShowing()) {
-                                                pDialog.dismiss();
-                                            }
-                                            Toast.makeText(activity, response.getString("message"), Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(activity, activity.getResources().getString(R.string.java_login_4), Toast.LENGTH_SHORT).show();
                                     }
                                     else {
                                         if (pDialog.isShowing()) {
                                             pDialog.dismiss();
                                         }
-                                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity, response.getString("message"), Toast.LENGTH_SHORT).show();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                }
+                                else {
                                     if (pDialog.isShowing()) {
                                         pDialog.dismiss();
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                if (pDialog.isShowing()) {
+                                    pDialog.dismiss();
+                                }
+                                Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (pDialog.isShowing()) {
-                            pDialog.dismiss();
-                        }
-                        Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        }, error -> {
+                            if (pDialog.isShowing()) {
+                                pDialog.dismiss();
+                            }
+                            Toast.makeText(activity, activity.getResources().getString(R.string.connection_fail), Toast.LENGTH_SHORT).show();
+                        });
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
             }

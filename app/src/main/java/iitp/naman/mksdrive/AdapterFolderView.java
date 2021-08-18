@@ -13,11 +13,11 @@ import android.widget.TextView;
  */
 
 class AdapterFolderView extends BaseAdapter {
-    private String[] file_Id;
-    private String[] file_mimeType;
-    private String[] file_name;
-    private String[] file_size;
-    private LayoutInflater inflater;
+    private final String[] file_Id;
+    private final String[] file_mimeType;
+    private final String[] file_name;
+    private final String[] file_size;
+    private final LayoutInflater inflater;
 
     AdapterFolderView(Context context, String[] file_Id,String[] file_mimeType,String[] file_name,String[] file_size) {
         this.file_Id=file_Id;

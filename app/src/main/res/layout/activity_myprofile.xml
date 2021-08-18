@@ -6,13 +6,13 @@
     android:layout_height="fill_parent"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhitish"
         android:fontFamily="sans-serif-condensed">
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/myToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -48,7 +48,6 @@
             android:padding="@dimen/page_info_padding"
             android:id="@+id/nameBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left">
             <ImageView
                 android:layout_width="@dimen/profile_image_width"
@@ -89,7 +88,6 @@
             android:padding="5dp"
             android:id="@+id/genderBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left">
             <ImageView
                 android:layout_width="50dp"
@@ -130,7 +128,6 @@
             android:padding="5dp"
             android:id="@+id/phoneBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left">
             <ImageView
                 android:layout_width="50dp"
@@ -172,7 +169,6 @@
             android:padding="5dp"
             android:id="@+id/emailBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left">
             <ImageView
                 android:layout_width="50dp"
@@ -213,7 +209,6 @@
             android:padding="5dp"
             android:id="@+id/panBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left">
             <ImageView
                 android:layout_width="50dp"
@@ -254,7 +249,6 @@
             android:padding="5dp"
             android:id="@+id/aadharBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left">
             <ImageView
                 android:layout_width="50dp"
@@ -297,7 +291,6 @@
             android:padding="5dp"
             android:id="@+id/addressBar"
             android:layout_marginTop="@dimen/profile_text_margin_top"
-            android:layout_marginLeft="@dimen/profile_text_margin_left"
             android:layout_marginStart="@dimen/profile_text_margin_left"
             android:layout_marginBottom="@dimen/btn_margin_bottom">
             <ImageView

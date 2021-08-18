@@ -2,14 +2,14 @@ package iitp.naman.mksdrive;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 /**
  * Created by naman on 30-Sep-16.
@@ -37,18 +37,15 @@ public class PasswordReset extends AppCompatActivity {
         inputEmail = findViewById(R.id.email);
         btnReset = findViewById(R.id.reset);
 
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(inputEmail.getText().toString().equals("")){
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_2), Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    inputEmail1 = inputEmail.getText().toString();
-                    Intent intent = new Intent(getApplicationContext(), ForgotPassword.class);
-                    intent.putExtra("username",inputEmail1);
-                    startActivity(intent);
-                }
+        btnReset.setOnClickListener(view -> {
+            if(inputEmail.getText().toString().equals("")){
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_login_2), Toast.LENGTH_SHORT).show();
+            }
+            else {
+                inputEmail1 = inputEmail.getText().toString();
+                Intent intent = new Intent(getApplicationContext(), ForgotPassword.class);
+                intent.putExtra("username",inputEmail1);
+                startActivity(intent);
             }
         });
     }

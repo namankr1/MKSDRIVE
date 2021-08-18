@@ -1,20 +1,18 @@
 package iitp.naman.mksdrive;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.view.View;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import org.json.JSONArray;
@@ -26,8 +24,6 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -90,36 +86,32 @@ public class FolderView extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         gridView = findViewById(R.id.gridView1);
         new ProcessFetchFiles(FolderView.this).execute();
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), FolderView.class);
+        gridView.setOnItemClickListener((parent, v, position, id) -> {
+            Intent intent = new Intent(getApplicationContext(), FolderView.class);
+            intent.putExtra("username", username);
+            intent.putExtra("secureKey", secureKey);
+            intent.putExtra("folderID", ((TextView) v.findViewById(R.id.folderId)).getText() + "");
+            intent.putExtra("mimeType", ((TextView) v.findViewById(R.id.folderMimeType)).getText() + "");
+            intent.putExtra("name", ((TextView) v.findViewById(R.id.folderName)).getText() + "");
+            intent.putExtra("downloadPath", downloadPath + File.separator + name);
+            startActivity(intent);
+        });
+        gridView.setLongClickable(true);
+        gridView.setOnItemLongClickListener((parent, v, position, id) -> {
+            String mimeType1 = ((TextView) v.findViewById(R.id.folderMimeType)).getText() + "";
+            if(mimeType1.equalsIgnoreCase("application/vnd.google-apps.folder")){
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_folderview_4), Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Intent intent = new Intent(getApplicationContext(), FileRequestByEmail.class);
                 intent.putExtra("username", username);
                 intent.putExtra("secureKey", secureKey);
                 intent.putExtra("folderID", ((TextView) v.findViewById(R.id.folderId)).getText() + "");
-                intent.putExtra("mimeType", ((TextView) v.findViewById(R.id.folderMimeType)).getText() + "");
+                intent.putExtra("mimeType", mimeType1);
                 intent.putExtra("name", ((TextView) v.findViewById(R.id.folderName)).getText() + "");
-                intent.putExtra("downloadPath", downloadPath + File.separator + name);
                 startActivity(intent);
             }
-        });
-        gridView.setLongClickable(true);
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-                String mimeType1 = ((TextView) v.findViewById(R.id.folderMimeType)).getText() + "";
-                if(mimeType1.equalsIgnoreCase("application/vnd.google-apps.folder")){
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_folderview_4), Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Intent intent = new Intent(getApplicationContext(), FileRequestByEmail.class);
-                    intent.putExtra("username", username);
-                    intent.putExtra("secureKey", secureKey);
-                    intent.putExtra("folderID", ((TextView) v.findViewById(R.id.folderId)).getText() + "");
-                    intent.putExtra("mimeType", mimeType1);
-                    intent.putExtra("name", ((TextView) v.findViewById(R.id.folderName)).getText() + "");
-                    startActivity(intent);
-                }
-                return true;
-            }
+            return true;
         });
     }
 
@@ -152,7 +144,7 @@ public class FolderView extends AppCompatActivity {
 
     private static class ProcessFetchFiles extends AsyncTask<String,Void,Boolean> {
         private ProgressDialog pDialog;
-        private WeakReference<FolderView> activityReference;
+        private final WeakReference<FolderView> activityReference;
 
         // only retain a weak reference to the activity
         ProcessFetchFiles(FolderView context) {
@@ -188,107 +180,98 @@ public class FolderView extends AppCompatActivity {
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_getdata);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("okfolder") == 0) {
-                                        JSONArray tempData =  response.getJSONArray("filelist");
-                                        int len=tempData.length();
-                                        activity.file_Id = new String[len];
-                                        activity.file_mimeType = new String[len];
-                                        activity.file_name = new String[len];
-                                        activity.file_size = new String[len];
-                                        for (int i = 0; i < len; i++) {
-                                            activity.file_Id[i] = tempData.getJSONObject(i).getString("id");
-                                            activity.file_mimeType[i] = tempData.getJSONObject(i).getString("mimeType");
-                                            activity.file_name[i] = tempData.getJSONObject(i).getString("name");
-                                            try{
-                                                long s1 = tempData.getJSONObject(i).getLong("size");
-                                                Double s = Long.valueOf(s1).doubleValue();
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("okfolder") == 0) {
+                                    JSONArray tempData =  response.getJSONArray("filelist");
+                                    int len=tempData.length();
+                                    activity.file_Id = new String[len];
+                                    activity.file_mimeType = new String[len];
+                                    activity.file_name = new String[len];
+                                    activity.file_size = new String[len];
+                                    for (int i = 0; i < len; i++) {
+                                        activity.file_Id[i] = tempData.getJSONObject(i).getString("id");
+                                        activity.file_mimeType[i] = tempData.getJSONObject(i).getString("mimeType");
+                                        activity.file_name[i] = tempData.getJSONObject(i).getString("name");
+                                        try{
+                                            long s1 = tempData.getJSONObject(i).getLong("size");
+                                            double s = Long.valueOf(s1).doubleValue();
+                                            if(s>1024){
+                                                s = s/1024;
                                                 if(s>1024){
                                                     s = s/1024;
                                                     if(s>1024){
                                                         s = s/1024;
-                                                        if(s>1024){
-                                                            s = s/1024;
-                                                            activity.file_size[i] = round(s,3) + " GB";
-                                                        }
-                                                        else{
-                                                            activity.file_size[i] = round(s,2) + " MB";
-                                                        }
+                                                        activity.file_size[i] = round(s,3) + " GB";
                                                     }
                                                     else{
-                                                        activity.file_size[i] = round(s,2) + " KB";
+                                                        activity.file_size[i] = round(s,2) + " MB";
                                                     }
                                                 }
                                                 else{
-                                                    activity.file_size[i] = round(s,2) + " B";
+                                                    activity.file_size[i] = round(s,2) + " KB";
                                                 }
                                             }
-                                            catch (Exception e){
-                                                activity.file_size[i] = "";
+                                            else{
+                                                activity.file_size[i] = round(s,2) + " B";
                                             }
                                         }
-                                        activity.gridView.setAdapter(new AdapterFolderView(activity,activity.file_Id,activity.file_mimeType,activity.file_name,activity.file_size));
-                                        if(len >0) {
+                                        catch (Exception e){
+                                            activity.file_size[i] = "";
+                                        }
+                                    }
+                                    activity.gridView.setAdapter(new AdapterFolderView(activity,activity.file_Id,activity.file_mimeType,activity.file_name,activity.file_size));
+                                    if(len >0) {
+                                        if (pDialog.isShowing()) {
+                                            pDialog.dismiss();
+                                        }
+                                    }
+                                    else {
+                                        AlertDialogError(activity.getResources().getString(R.string.java_folderview_1));
+                                    }
+                                }
+                                else if (status.compareTo("okfile") == 0) {
+                                    String encodedData = response.getString("filedata");
+                                    byte[] decodedData = Base64.decode(encodedData, Base64.NO_WRAP);
+                                    if(!MakeFolder.makeFile(activity, activity.downloadPath , activity.name, decodedData)){
+                                        AlertDialogError(activity.getResources().getString(R.string.java_folderview_5));
+                                    }
+                                    else{
+                                        try {
+                                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                                            Uri fileUri = FileProvider.getUriForFile(activity, activity.getString(R.string.url_host), new File(activity.downloadPath, activity.name));
+                                            intent.setDataAndType(fileUri, activity.mimeType);
+                                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                                             if (pDialog.isShowing()) {
                                                 pDialog.dismiss();
                                             }
+                                            activity.startActivity(intent);
+                                            Toast.makeText(activity,"File saved at " + activity.downloadPath+ File.separator+ activity.name, Toast.LENGTH_SHORT).show();
+                                            activity.finish();
                                         }
-                                        else {
-                                            AlertDialogError(activity.getResources().getString(R.string.java_folderview_1));
-                                        }
-                                    }
-                                    else if (status.compareTo("okfile") == 0) {
-                                        String encodedData = response.getString("filedata");
-                                        byte decodedData[] = Base64.decode(encodedData, Base64.NO_WRAP);
-                                        if(!MakeFolder.makeFile(activity, activity.downloadPath , activity.name, decodedData)){
-                                            AlertDialogError(activity.getResources().getString(R.string.java_folderview_5));
-                                        }
-                                        else{
-                                            try {
-                                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                                Uri fileUri = FileProvider.getUriForFile(activity, activity.getString(R.string.url_host), new File(activity.downloadPath, activity.name));
-                                                intent.setDataAndType(fileUri, activity.mimeType);
-                                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                                                if (pDialog.isShowing()) {
-                                                    pDialog.dismiss();
-                                                }
-                                                activity.startActivity(intent);
-                                                Toast.makeText(activity,"File saved at " + activity.downloadPath+ File.separator+ activity.name, Toast.LENGTH_SHORT).show();
-                                                activity.finish();
-                                            }
-                                            catch (Exception e){
-                                                e.printStackTrace();
-                                                AlertDialogError(activity.getResources().getString(R.string.java_folderview_6) + " "+ activity.downloadPath+ File.separator+ activity.name);
-                                            }
+                                        catch (Exception e){
+                                            e.printStackTrace();
+                                            AlertDialogError(activity.getResources().getString(R.string.java_folderview_6) + " "+ activity.downloadPath+ File.separator+ activity.name);
                                         }
                                     }
-                                    else if(status.compareTo("err") == 0){
-                                        String resp = response.getString("message");
-                                        if(resp.equals("Invalid session, please login again")){
-                                            AlertDialogInvalidSession(resp);
-                                        }
-                                        else {
-                                            AlertDialogError(resp);
-                                        }
+                                }
+                                else if(status.compareTo("err") == 0){
+                                    String resp = response.getString("message");
+                                    if(resp.equals("Invalid session, please login again")){
+                                        AlertDialogInvalidSession(resp);
                                     }
-                                    else{
-                                        AlertDialogError(activity.getResources().getString(R.string.connection_fail));
+                                    else {
+                                        AlertDialogError(resp);
                                     }
-                                } catch (JSONException e) {
+                                }
+                                else{
                                     AlertDialogError(activity.getResources().getString(R.string.connection_fail));
                                 }
+                            } catch (JSONException e) {
+                                AlertDialogError(activity.getResources().getString(R.string.connection_fail));
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        AlertDialogError(activity.getResources().getString(R.string.connection_fail));
-                    }
-                });
+                        }, error -> AlertDialogError(activity.getResources().getString(R.string.connection_fail)));
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
 
@@ -312,11 +295,9 @@ public class FolderView extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
             builder.setMessage(resp)
                     .setCancelable(false)
-                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                            activity.finish();
-                        }
+                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), (dialog, id) -> {
+                        dialog.cancel();
+                        activity.finish();
                     });
             AlertDialog alert = builder.create();
             if (pDialog.isShowing()) {
@@ -333,18 +314,16 @@ public class FolderView extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
             builder.setMessage(resp)
                     .setCancelable(false)
-                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
-                            e.putBoolean("rm", false);
-                            e.apply();
-                            e.commit();
-                            dialog.cancel();
-                            Intent intent = new Intent(activity, Login.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            activity.startActivity(intent);
-                            activity.finish();
-                        }
+                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), (dialog, id) -> {
+                        SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
+                        e.putBoolean("rm", false);
+                        e.apply();
+                        e.commit();
+                        dialog.cancel();
+                        Intent intent = new Intent(activity, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        activity.startActivity(intent);
+                        activity.finish();
                     });
             AlertDialog alert = builder.create();
             if (pDialog.isShowing()) {
@@ -353,6 +332,4 @@ public class FolderView extends AppCompatActivity {
             alert.show();
         }
     }
-
-
 }

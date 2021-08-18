@@ -1,25 +1,23 @@
 package iitp.naman.mksdrive;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
@@ -65,16 +63,13 @@ public class FileRequestByEmail extends AppCompatActivity {
             inputEmail.setText(username);
             btnRequest = findViewById(R.id.btnRequest);
 
-            btnRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    inputEmail1=inputEmail.getText().toString();
-                    if(inputEmail1.equals("")){
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_filerequestbyemail_1), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        new ProcessRegister(FileRequestByEmail.this).execute();
-                    }
+            btnRequest.setOnClickListener(view -> {
+                inputEmail1=inputEmail.getText().toString();
+                if(inputEmail1.equals("")){
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.java_filerequestbyemail_1), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    new ProcessRegister(FileRequestByEmail.this).execute();
                 }
             });
         }
@@ -108,7 +103,7 @@ public class FileRequestByEmail extends AppCompatActivity {
 
     private static class ProcessRegister extends AsyncTask<String,Void,JSONObject> {
         private ProgressDialog pDialog;
-        private WeakReference<FileRequestByEmail> activityReference;
+        private final WeakReference<FileRequestByEmail> activityReference;
 
         // only retain a weak reference to the activity
         ProcessRegister(FileRequestByEmail context) {
@@ -146,39 +141,30 @@ public class FileRequestByEmail extends AppCompatActivity {
                 RequestQueue que = Volley.newRequestQueue(activity);
                 String urlString = activity.getResources().getString(R.string.url_senddata);
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, urlString, jsonIn,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    String status = response.getString("status");
-                                    if (status.compareTo("ok") == 0) {
-                                        AlertDialogError(response.getString("message"));
+                        response -> {
+                            try {
+                                String status = response.getString("status");
+                                if (status.compareTo("ok") == 0) {
+                                    AlertDialogError(response.getString("message"));
+                                }
+                                else if (status.compareTo("err") == 0) {
+                                    String resp = response.getString("message");
+                                    if(resp.equals("Invalid session, please login again")){
+                                        AlertDialogInvalidSession(resp);
                                     }
-                                    else if (status.compareTo("err") == 0) {
-                                        String resp = response.getString("message");
-                                        if(resp.equals("Invalid session, please login again")){
-                                            AlertDialogInvalidSession(resp);
-                                        }
-                                        else {
-                                            AlertDialogError(resp);
-                                        }
-                                    }
-                                    else{
-                                        AlertDialogError(activity.getResources().getString(R.string.connection_fail));
+                                    else {
+                                        AlertDialogError(resp);
                                     }
                                 }
-                                catch (JSONException e) {
-                                    e.printStackTrace();
+                                else{
                                     AlertDialogError(activity.getResources().getString(R.string.connection_fail));
                                 }
                             }
-                        }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        AlertDialogError(activity.getResources().getString(R.string.connection_fail));
-                    }
-                });
+                            catch (JSONException e) {
+                                e.printStackTrace();
+                                AlertDialogError(activity.getResources().getString(R.string.connection_fail));
+                            }
+                        }, error -> AlertDialogError(activity.getResources().getString(R.string.connection_fail)));
                 jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(StartScreen.MAX_TIMEOUT,StartScreen.MAX_RETRY,StartScreen.BACKOFF_MULT));
                 que.add(jsonObjReq);
             }
@@ -203,11 +189,9 @@ public class FileRequestByEmail extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
             builder.setMessage(resp)
                     .setCancelable(false)
-                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                            activity.finish();
-                        }
+                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), (dialog, id) -> {
+                        dialog.cancel();
+                        activity.finish();
                     });
             AlertDialog alert = builder.create();
             if (pDialog.isShowing()) {
@@ -224,18 +208,16 @@ public class FileRequestByEmail extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.MyAlertDialog);
             builder.setMessage(resp)
                     .setCancelable(false)
-                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
-                            e.putBoolean("rm", false);
-                            e.apply();
-                            e.commit();
-                            dialog.cancel();
-                            Intent intent = new Intent(activity, Login.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            activity.startActivity(intent);
-                            activity.finish();
-                        }
+                    .setPositiveButton(activity.getResources().getString(R.string.java_folderview_2), (dialog, id) -> {
+                        SharedPreferences.Editor e = activity.getSharedPreferences("cookie_data", MODE_PRIVATE).edit();
+                        e.putBoolean("rm", false);
+                        e.apply();
+                        e.commit();
+                        dialog.cancel();
+                        Intent intent = new Intent(activity, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        activity.startActivity(intent);
+                        activity.finish();
                     });
             AlertDialog alert = builder.create();
             if (pDialog.isShowing()) {
